@@ -20,14 +20,22 @@ import (
 )
 
 func main() {
-    parse.Initialize("APP_ID", "REST_KEY", "MASTER_KEY") // master key is optional
+	parse.Initialize(&parse.ClientConfig{
+		Schema:     parse.SchemeHttp,
+		Host:       "192.168.0.122:1337",
+		PathPrefix: "/parse",
+		Version:    "",
+		AppID:      "myAppId",
+		RestKey:    "restAPIKey",
+		MasterKey:  "myAppId", // master key is optional
+	})
     
     user := parse.User{}
     q, err := parse.NewQuery(&user)
 	if err != nil {
 		panic(err)
 	}
-    q.EqualTo("email", "kylemcc@gmail.com")
+    q.EqualTo("email", "ihoukai@gmail.com")
     q.GreaterThan("numFollowers", 10).OrderBy("-createdAt") // API is chainable
     err := q.First()
     if err != nil {

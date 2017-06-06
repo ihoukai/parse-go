@@ -138,18 +138,19 @@ func SetHTTPClient(c *http.Client) error {
 
 func (c *clientT) doRequest(op requestT) ([]byte, error) {
 	ep, err := op.endpoint()
-	fmt.Println(ep)
 	if err != nil {
 		return nil, err
 	}
 
 	method := op.method()
+	Debug("%s %s\n", method, ep)
 	var body io.Reader
 	if method == "POST" || method == "PUT" {
 		b, err := op.body()
 		if err != nil {
 			return nil, err
 		}
+
 		body = strings.NewReader(b)
 	}
 
@@ -159,20 +160,29 @@ func (c *clientT) doRequest(op requestT) ([]byte, error) {
 	}
 
 	req.Header.Add(UserAgentHeader, defaultClient.userAgent)
+	Debug("%s : %s\n", UserAgentHeader, defaultClient.userAgent)
 	req.Header.Add(AppIdHeader, defaultClient.config.AppID)
+	Debug("%s : %s\n", AppIdHeader, defaultClient.config.AppID)
 	if op.useMasterKey() && c.config.MasterKey != "" && op.session() == nil {
 		req.Header.Add(MasterKeyHeader, c.config.MasterKey)
+		Debug("%s : %s\n", MasterKeyHeader, c.config.MasterKey)
 	} else {
 		req.Header.Add(RestKeyHeader, c.config.RestKey)
+		Debug("%s : %s\n", RestKeyHeader, c.config.RestKey)
 		if s := op.session(); s != nil {
 			req.Header.Add(SessionTokenHeader, s.sessionToken)
+			Debug("%s : %s\n", SessionTokenHeader, s.sessionToken)
 		}
 	}
 
 	if c := op.contentType(); c != "" {
 		req.Header.Add("Content-Type", op.contentType())
+		Debug("%s : %s\n", "Content-Type", op.contentType())
 	}
 	req.Header.Add("Accept-Encoding", "gzip")
+	Debug("%s : %s\n", "Accept-Encoding", "gzip")
+	b, _ := op.body()
+	Debug("%s\n", b)
 
 	if c.limiter != nil {
 		c.limiter.limit()
@@ -208,9 +218,10 @@ func (c *clientT) doRequest(op requestT) ([]byte, error) {
 		if err := json.Unmarshal(respBody, &ret); err != nil {
 			return nil, err
 		}
+		Debug("%s\n", string(respBody))
 		return nil, &ret
 	}
-
+	Debug("%s\n", string(respBody))
 	return respBody, nil
 }
 
@@ -393,9 +404,9 @@ func populateValue(dst interface{}, src interface{}) (err error) {
 						k = nk
 					}
 
-					k = firstToUpper(k)
+					k1 := firstToUpper(k)
 
-					if f := dvi.FieldByName(k); f.IsValid() && v != nil {
+					if f := dvi.FieldByName(k1); f.IsValid() && v != nil {
 						if f.Kind() == reflect.Ptr {
 							if f.IsNil() {
 								f.Set(reflect.New(f.Type().Elem()))
