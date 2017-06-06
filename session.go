@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/url"
+	"path"
 	"reflect"
 )
 
@@ -156,14 +157,14 @@ func (s *loginRequestT) method() string {
 
 func (s *loginRequestT) endpoint() (string, error) {
 	u := url.URL{}
-	u.Scheme = "https"
-	u.Host = parseHost
+	u.Scheme = defaultClient.config.Schema
+	u.Host = defaultClient.config.Host
 	if s.s != nil {
-		u.Path = "/1/users/me"
+		u.Path = path.Join(defaultClient.config.PathPrefix, defaultClient.config.Version, "/users/me")
 	} else if s.authdata != nil {
-		u.Path = "/1/users"
+		u.Path = path.Join(defaultClient.config.PathPrefix, defaultClient.config.Version, "/users")
 	} else {
-		u.Path = "/1/login"
+		u.Path = path.Join(defaultClient.config.PathPrefix, defaultClient.config.Version, "/login")
 	}
 
 	if s.username != "" && s.password != "" {

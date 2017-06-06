@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/url"
+	"path"
 	"reflect"
 )
 
@@ -24,9 +25,9 @@ func (c *createT) method() string {
 func (c *createT) endpoint() (string, error) {
 	p := getEndpointBase(c.v)
 	u := url.URL{}
-	u.Scheme = "https"
-	u.Host = parseHost
-	u.Path = p
+	u.Scheme = defaultClient.config.Schema
+	u.Host = defaultClient.config.Host
+	u.Path = path.Join(defaultClient.config.PathPrefix, p)
 
 	return u.String(), nil
 }

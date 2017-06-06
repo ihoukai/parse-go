@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	ParseVersion       = "1"
+	SchemeHttp         = "http"
+	SchemeHttps        = "https"
 	AppIdHeader        = "X-Parse-Application-Id"
 	RestKeyHeader      = "X-Parse-REST-API-Key"
 	MasterKeyHeader    = "X-Parse-Master-Key"
@@ -22,7 +23,6 @@ const (
 	UserAgentHeader    = "User-Agent"
 )
 
-var parseHost = "api.parse.com"
 var fieldNameCache map[reflect.Type]map[string]string = make(map[reflect.Type]map[string]string)
 var fieldCache = make(map[reflect.Type]reflect.StructField)
 
@@ -58,26 +58,30 @@ func (e *parseErrorT) Message() string {
 	return e.ErrorMessage
 }
 
+// ClientConfig parsesdk配置
+type ClientConfig struct {
+	Schema     string
+	Host       string
+	PathPrefix string
+	Version    string
+	AppID      string
+	RestKey    string
+	MasterKey  string
+}
+
 type clientT struct {
-	appId     string
-	restKey   string
-	masterKey string
-
 	userAgent  string
+	config     *ClientConfig
 	httpClient *http.Client
-
-	limiter limiter
+	limiter    limiter
 }
 
 var defaultClient *clientT
 
 // Initialize the parse library with your API keys
-func Initialize(appId, restKey, masterKey string) {
+func Initialize(config *ClientConfig) {
 	defaultClient = &clientT{
-		appId:      appId,
-		restKey:    restKey,
-		masterKey:  masterKey,
-		userAgent:  "github.com/kylemcc/parse",
+		config:     config,
 		httpClient: &http.Client{},
 	}
 }
@@ -134,6 +138,7 @@ func SetHTTPClient(c *http.Client) error {
 
 func (c *clientT) doRequest(op requestT) ([]byte, error) {
 	ep, err := op.endpoint()
+	fmt.Println(ep)
 	if err != nil {
 		return nil, err
 	}
@@ -154,11 +159,11 @@ func (c *clientT) doRequest(op requestT) ([]byte, error) {
 	}
 
 	req.Header.Add(UserAgentHeader, defaultClient.userAgent)
-	req.Header.Add(AppIdHeader, defaultClient.appId)
-	if op.useMasterKey() && c.masterKey != "" && op.session() == nil {
-		req.Header.Add(MasterKeyHeader, c.masterKey)
+	req.Header.Add(AppIdHeader, defaultClient.config.AppID)
+	if op.useMasterKey() && c.config.MasterKey != "" && op.session() == nil {
+		req.Header.Add(MasterKeyHeader, c.config.MasterKey)
 	} else {
-		req.Header.Add(RestKeyHeader, c.restKey)
+		req.Header.Add(RestKeyHeader, c.config.RestKey)
 		if s := op.session(); s != nil {
 			req.Header.Add(SessionTokenHeader, s.sessionToken)
 		}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"path"
 	"time"
 )
 
@@ -54,9 +55,9 @@ func (p *pushT) method() string {
 
 func (p *pushT) endpoint() (string, error) {
 	u := url.URL{}
-	u.Scheme = "https"
-	u.Host = parseHost
-	u.Path = "/1/push"
+	u.Scheme = defaultClient.config.Schema
+	u.Host = defaultClient.config.Host
+	u.Path = path.Join(defaultClient.config.PathPrefix, defaultClient.config.Version, "/push")
 
 	return u.String(), nil
 }

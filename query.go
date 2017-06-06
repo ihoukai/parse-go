@@ -959,10 +959,10 @@ func (q *queryT) endpoint() (string, error) {
 		return "", err
 	}
 
-	u.Scheme = "https"
-	u.Host = parseHost
+	u.Scheme = defaultClient.config.Schema
+	u.Host = defaultClient.config.Host
 	u.RawQuery = qs
-	u.Path = p
+	u.Path = path.Join(defaultClient.config.PathPrefix, p)
 
 	return u.String(), nil
 }

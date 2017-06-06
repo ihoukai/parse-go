@@ -540,7 +540,7 @@ func getEndpointBase(v interface{}) string {
 		p = path.Join("classes", cname)
 	}
 
-	p = path.Join(ParseVersion, p)
+	p = path.Join(defaultClient.config.Version, p)
 	return p
 }
 
@@ -748,9 +748,9 @@ func (c *configRequestT) method() string {
 
 func (c *configRequestT) endpoint() (string, error) {
 	u := url.URL{}
-	u.Scheme = "https"
-	u.Host = parseHost
-	u.Path = path.Join(ParseVersion, "config")
+	u.Scheme = defaultClient.config.Schema
+	u.Host = defaultClient.config.Host
+	u.Path = path.Join(defaultClient.config.PathPrefix, defaultClient.config.Version, "config")
 	return u.String(), nil
 }
 
