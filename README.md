@@ -5,18 +5,23 @@ This package provides a client for Parse's REST API. So far, it supports most of
 
 ###Installation
 
+```
 go get github.com/ihoukai/parse-go
+
+```
 ###Documentation Full documentation is provided by godoc.org
 
 ###Usage:
 
+
+```
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"time"
-    
-    parse "github.com/ihoukai/parse-go"
+
+	parse "github.com/ihoukai/parse-go"
 )
 
 func main() {
@@ -29,22 +34,22 @@ func main() {
 		RestKey:    "restAPIKey",
 		MasterKey:  "myAppId", // master key is optional
 	})
-    
-    user := parse.User{}
-    q, err := parse.NewQuery(&user)
+
+	user := parse.User{}
+	q, err := parse.NewQuery(&user)
 	if err != nil {
 		panic(err)
 	}
-    q.EqualTo("email", "ihoukai@gmail.com")
-    q.GreaterThan("numFollowers", 10).OrderBy("-createdAt") // API is chainable
-    err := q.First()
-    if err != nil {
-        if pe, ok := err.(parse.ParseError); ok {
-            fmt.Printf("Error querying parse: %d - %s\n", pe.Code(), pe.Message())
-        }
-    }
-    
-    fmt.Printf("Retrieved user with id: %s\n", u.Id)
+	q.EqualTo("email", "ihoukai@gmail.com")
+	q.GreaterThan("numFollowers", 10).OrderBy("-createdAt") // API is chainable
+	err := q.First()
+	if err != nil {
+		if pe, ok := err.(parse.ParseError); ok {
+			fmt.Printf("Error querying parse: %d - %s\n", pe.Code(), pe.Message())
+		}
+	}
+
+	fmt.Printf("Retrieved user with id: %s\n", u.Id)
 
 	q2, _ := parse.NewQuery(&parse.User{})
 	q2.GreaterThan("createdAt", time.Date(2014, 01, 01, 0, 0, 0, 0, time.UTC))
@@ -55,7 +60,7 @@ func main() {
 	// The iterator returned allows for early cancelation of the iteration process, and
 	// stores any error that triggers early termination
 	iterator, err := q2.Each(rc)
-	for u := range rc{
+	for u := range rc {
 		fmt.Printf("received user: %v\n", u)
 		// Do something
 		if err := process(u); err != nil {
@@ -69,8 +74,11 @@ func main() {
 		panic(it.Error())
 	}
 }
-###TODO
 
+```
+
+###TODO
+```
 Missing query operations
 Related to
 Missing CRUD operations:
@@ -83,3 +91,4 @@ Background Jobs
 Analytics
 File upload/retrieval
 Batch operations
+```
