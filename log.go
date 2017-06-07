@@ -90,20 +90,20 @@ type defaultLog struct {
 
 // Debug log
 func (d *defaultLog) Debug(format string, a ...interface{}) {
-	fmt.Printf(format, a...)
+	fmt.Println(fmt.Sprintf(format, a...))
 }
 
 // Info log
 func (d *defaultLog) Info(format string, a ...interface{}) {
-	fmt.Printf(format, a...)
+	fmt.Println(fmt.Sprintf(format, a...))
 }
 
 // Error log
 func (d *defaultLog) Error(format string, a ...interface{}) {
-	fmt.Printf(format, a...)
+	fmt.Println(fmt.Sprintf(format, a...))
 }
 
 // Warning log
 func (d *defaultLog) Warning(format string, a ...interface{}) {
-	fmt.Printf(format, a...)
+	fmt.Println(fmt.Sprintf(format, a...))
 }

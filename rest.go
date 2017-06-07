@@ -143,7 +143,7 @@ func (c *clientT) doRequest(op requestT) ([]byte, error) {
 	}
 
 	method := op.method()
-	Debug("%s %s\n", method, ep)
+	Debug("%s %s", method, ep)
 	var body io.Reader
 	if method == "POST" || method == "PUT" {
 		b, err := op.body()
@@ -160,29 +160,29 @@ func (c *clientT) doRequest(op requestT) ([]byte, error) {
 	}
 
 	req.Header.Add(UserAgentHeader, defaultClient.userAgent)
-	Debug("%s : %s\n", UserAgentHeader, defaultClient.userAgent)
+	Debug("%s : %s", UserAgentHeader, defaultClient.userAgent)
 	req.Header.Add(AppIdHeader, defaultClient.config.AppID)
-	Debug("%s : %s\n", AppIdHeader, defaultClient.config.AppID)
+	Debug("%s : %s", AppIdHeader, defaultClient.config.AppID)
 	if op.useMasterKey() && c.config.MasterKey != "" && op.session() == nil {
 		req.Header.Add(MasterKeyHeader, c.config.MasterKey)
-		Debug("%s : %s\n", MasterKeyHeader, c.config.MasterKey)
+		Debug("%s : %s", MasterKeyHeader, c.config.MasterKey)
 	} else {
 		req.Header.Add(RestKeyHeader, c.config.RestKey)
-		Debug("%s : %s\n", RestKeyHeader, c.config.RestKey)
+		Debug("%s : %s", RestKeyHeader, c.config.RestKey)
 		if s := op.session(); s != nil {
 			req.Header.Add(SessionTokenHeader, s.sessionToken)
-			Debug("%s : %s\n", SessionTokenHeader, s.sessionToken)
+			Debug("%s : %s", SessionTokenHeader, s.sessionToken)
 		}
 	}
 
 	if c := op.contentType(); c != "" {
 		req.Header.Add("Content-Type", op.contentType())
-		Debug("%s : %s\n", "Content-Type", op.contentType())
+		Debug("%s : %s", "Content-Type", op.contentType())
 	}
 	req.Header.Add("Accept-Encoding", "gzip")
-	Debug("%s : %s\n", "Accept-Encoding", "gzip")
+	Debug("%s : %s", "Accept-Encoding", "gzip")
 	b, _ := op.body()
-	Debug("%s\n", b)
+	Debug("%s", b)
 
 	if c.limiter != nil {
 		c.limiter.limit()
@@ -218,10 +218,10 @@ func (c *clientT) doRequest(op requestT) ([]byte, error) {
 		if err := json.Unmarshal(respBody, &ret); err != nil {
 			return nil, err
 		}
-		Debug("%s\n", string(respBody))
+		Debug("%s", string(respBody))
 		return nil, &ret
 	}
-	Debug("%s\n", string(respBody))
+	Debug("%s", string(respBody))
 	return respBody, nil
 }
 
