@@ -5,10 +5,17 @@ This package provides a client for Parse's REST API. So far, it supports most of
 
 ###Installation
 
+```
 go get github.com/ihoukai/parse-go
+
+```
 ###Documentation Full documentation is provided by godoc.org
 
 ###Usage:
+
+
+```
+
 
 package main
 
@@ -69,6 +76,9 @@ func main() {
 		panic(it.Error())
 	}
 }
+
+```
+
 ###TODO
 
 Missing query operations
