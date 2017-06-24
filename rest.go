@@ -77,13 +77,40 @@ type clientT struct {
 }
 
 var defaultClient *clientT
+var isInit = false
 
 // Initialize the parse library with your API keys
 func Initialize(config *ClientConfig) {
+	if config == nil {
+		panic("Parse Config Can't be nil")
+	}
+	if config.Schema == "" ||
+		config.Host == "" ||
+		config.AppID == "" {
+		panic("Parse Config filed 'Schema' 'Host' 'AppID' can not be empty")
+	}
 	defaultClient = &clientT{
 		config:     config,
 		httpClient: &http.Client{},
 	}
+}
+
+// Initialize2 the parse library with your API keys
+func Initialize2(config map[string]interface{}) {
+	if config == nil {
+		panic("Parse Config Can't be nil")
+	}
+
+	clientConfig := &ClientConfig{
+		Schema:     config["Schema"].(string),
+		Host:       config["Host"].(string),
+		PathPrefix: config["PathPrefix"].(string),
+		Version:    config["Version"].(string),
+		AppID:      config["AppID"].(string),
+		RestKey:    config["RestKey"].(string),
+		MasterKey:  config["MasterKey"].(string),
+	}
+	Initialize(clientConfig)
 }
 
 // Set the timeout for requests to Parse
